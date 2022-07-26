@@ -6,6 +6,7 @@ from sqlalchemy import create_engine
 from models.User import News, User, db
 from werkzeug.security import generate_password_hash
 from faker import Faker
+from faker_vehicle import VehicleProvider
 
 db = SQLAlchemy()
 engine = create_engine('mysql://root@localhost/db_sample')
@@ -48,15 +49,16 @@ def insert():
     db.session.commit()
 
 
-    fake_data = Faker()
+    fake = Faker()
+    fake.add_provider(VehicleProvider)
     for _ in range(100):
-        none = News(title=fake_data.title(),
-                    content=fake_data.content(),
-                    datetime=fake_data.datetime(),
-                    created_by=fake_data.created_by(),
-                    updated_by=fake_data.updated_by())
+        none = News(title=fake.vehicle_category(),
+                    content=fake.vehicle_make_model(),
+                    datetime=fake.vehicle_year(),
+                    created_by=fake.name(),
+                    updated_by=fake.name())
 
-    db.session.add(none)
+        db.session.add(none)
     db.session.commit() 
 
     return '==================DATA INSERTED=================='
