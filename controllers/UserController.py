@@ -1,6 +1,6 @@
 from datetime import datetime
 from enum import Flag
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from models.User import News, User, db
@@ -64,11 +64,12 @@ def insert():
 
     return '==================DATA INSERTED=================='
 
+#routing
 def news():
     db = SQLAlchemy()
     cursor = connection.cursor()
     #SELECT
-    query = "SELECT news_id, title, content, datetime FROM news"
+    query = "SELECT news_id, title, content, datetime, flag FROM news"
     cursor.execute(query)
     columns = [column[0] for column in cursor.description] #ambil nama kolom
     result = []
@@ -78,11 +79,11 @@ def news():
         
     return jsonify(result)
 
-def show(news_id):
+def get_news(news_id):
     db = SQLAlchemy()
     cursor = connection.cursor()
     #SELECT
-    query = "SELECT news_id, title, content, datetime FROM news WHERE news_id = %s"
+    query = "SELECT news_id, title, content, datetime, flag FROM news WHERE news_id = %s"
     cursor.execute(query, [news_id])
     columns = [column[0] for column in cursor.description] #ambil nama kolom
     result = []
@@ -90,8 +91,48 @@ def show(news_id):
         
     return jsonify(result)
 
-def update():
-    pass
+def insert_news():
+    db = SQLAlchemy()
+    cursor = connection.cursor()
+    news_details = request.json
+    title = news_details['title']
+    content = news_details['content']
+    datetime = news_details['datetime']
+    flag = news_details['flag']
+    created_by = news_details['created_by']
+    query = "INSERT INTO news(title, content, datetime, flag, created_by) VALUES (%s,%s,%s,%s,%s)"
+    cursor.execute(query, [title, content, datetime, flag, created_by])
+    connection.commit()
+
+    return ('data inserted')
+
+def update(news_id):
+    db = SQLAlchemy()
+    cursor = connection.cursor()
+    news_details = request.json
+    news_id = news_details['news_id']
+    title = news_details['title']
+    content = news_details['content']
+    datetime = news_details['datetime']
+    flag = news_details['flag']
+    updated_by = updated_by['updated_by']
+    query = "UPDATE news SET title = %s, content = %s, datetime = %s, flag = %s, updated_by = %s WHERE news_id = %s"
+    cursor.execute(query, [title, content, datetime, flag, updated_by, news_id])
+    connection.commit()
+
+    return ("data updated")
+
+def patch_news(news_id):
+    db = SQLAlchemy()
+    cursor = connection.cursor()
+    news_details = request.json
+    news_id = news_details['news_id']
+    flag = news_details['flag']
+    query = "UPDATE news SET flag = %s WHERE news_id = %s"
+    cursor.execute(query, [flag, news_id])
+    connection.commit()
+    
+    return ('patched')
 
 def delete(news_id):
     db = SQLAlchemy()

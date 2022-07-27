@@ -34,13 +34,6 @@ def index():
             'localhost:5000/news/insert': 'Insert data in mysql database table(news)',
             'localhost:5000/news/<int:news_id>': 'select data in mysql database table(news)'}
 
-@app.route('/news')
-def news():
-    return(news)
-
-
-
-
 
 if __name__ == '__main__':
     app.debug = True

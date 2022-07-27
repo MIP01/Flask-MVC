@@ -2,7 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
-# Creating the Inserttable for inserting data into the database
+# Creating the table for inserting data into the database
 
 
 class User(db.Model):
