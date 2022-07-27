@@ -56,7 +56,8 @@ def insert():
                     content=fake.vehicle_make_model(),
                     datetime=fake.vehicle_year(),
                     created_by=fake.name(),
-                    updated_by=fake.name())
+                    updated_by=fake.name(),
+                    flag=fake.random_element(elements=('1', '2', '3')))
 
         db.session.add(none)
     db.session.commit() 
@@ -92,5 +93,10 @@ def show(news_id):
 def update():
     pass
 
-def delete():
-    pass
+def delete(news_id):
+    db = SQLAlchemy()
+    cursor = connection.cursor()
+    query = "DELETE FROM news WHERE news_id = %s"
+    cursor.execute(query, [news_id])
+    connection.commit()
+    return ('deleted')

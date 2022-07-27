@@ -33,6 +33,7 @@ class News(db.Model):
     datetime = db.Column(db.Integer)
     created_by = db.Column(db.String(100))
     updated_by = db.Column(db.String(100))
+    flag = db.Column(db.Integer)
 
     def is_active(self):
         """True, as all users are active."""
@@ -40,13 +41,3 @@ class News(db.Model):
 
     def get_id(self):
         return True
-
-    def to_dict(self):
-        return {
-            'news_id': self.news_id,
-            'title': self.title,
-            'content': self.content,
-            'datetime': self.datetime,
-            'created_by': self.created_by,
-            'updated_by': self.updated_by
-        }
