@@ -30,9 +30,15 @@ def load_user(user_id):
 def index():
     return {'status': 'OK',
             'localhost:5000/auth': 'authenticate user',
+            'localhost:5000/auth/logout': 'logout user',
+            'localhost:5000/news': 'view content list',
             'localhost:5000/news/create': 'Create table in mysql database',
             'localhost:5000/news/insert': 'Insert data in mysql database table(news)',
-            'localhost:5000/news/<int:news_id>': 'select data in mysql database table(news)'}
+            'localhost:5000/news [POST]': 'insert news',
+            'localhost:5000/news/<int:news_id> [GET]': 'get news by id',
+            'localhost:5000/news/<int:news_id> [PUT]': 'update news by id',
+            'localhost:5000/news/<int:news_id> [PATCH]': 'patch news by id',
+            'localhost:5000/news/<int:news_id> [DELETE]': 'delete news by id'}
 
 
 if __name__ == '__main__':

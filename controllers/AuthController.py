@@ -21,7 +21,7 @@ def index():
             return redirect(url_for('auth_bp.index'))
         
         login_user(user)
-        return redirect('/news')
+        return redirect(url_for('user_bp.news'))
 
 def logout():
     logout_user()
