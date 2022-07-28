@@ -115,7 +115,7 @@ def update(news_id):
     content = news_details['content']
     datetime = news_details['datetime']
     flag = news_details['flag']
-    updated_by = updated_by['updated_by']
+    updated_by = news_details['updated_by']
     query = "UPDATE news SET title = %s, content = %s, datetime = %s, flag = %s, updated_by = %s WHERE news_id = %s"
     cursor.execute(query, [title, content, datetime, flag, updated_by, news_id])
     connection.commit()
