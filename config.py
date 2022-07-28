@@ -11,7 +11,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 DEBUG = True
 
 # Connect to the MYSQL database
-SQLALCHEMY_DATABASE_URI = 'mysql://root@localhost/db_sample'
+SQLALCHEMY_DATABASE_URI = 'mysql://6llAPxwUTD:rgmDeuTj6m@remotemysql.com/6llAPxwUTD'
 
 # Turn off the Flask-SQLAlchemy event system and warning
 SQLALCHEMY_TRACK_MODIFICATIONS = False
