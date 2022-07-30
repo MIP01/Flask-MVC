@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+</head>
+<table class="table">
+    <thead class="table-dark">
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">route</th>
+        <th scope="col">request method</th>
+        <th scope="col">description</th>
+        <th scope="col">access</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">1</th>
+        <td>localhost:5000/auth</td>
+        <td>GET</td>
+        <td>authenticate user</td>
+        <td>-</td>
+      </tr>
+      <tr>
+        <th scope="row">2</th>
+        <td>localhost:5000/auth/logout</td>
+        <td>GET</td>
+        <td>logout user</td>
+        <td>-</td>
+      </tr>
+      <tr>
+        <th scope="row">3</th>
+        <td>localhost:5000/news</td>
+        <td>GET</td>
+        <td>view content list(need login)</td>
+        <td>need login</td>
+      </tr>
+      <tr>
+        <th scope="row">4</th>
+        <td>localhost:5000/news/create</td>
+        <td>GET</td>
+        <td>create table in mysql database</td>
+        <td>-</td>
+      </tr>
+      <tr>
+        <th scope="row">5</th>
+        <td>localhost:5000/news/insert</td>
+        <td>GET</td>
+        <td>auto generate user and news in mysql database</td>
+        <td>-</td>
+      </tr>
+      <tr>
+        <th scope="row">6</th>
+        <td>localhost:5000/news</td>
+        <td>POST</td>
+        <td>insert news</td>
+        <td>need login</td>
+      </tr>
+      <tr>
+        <th scope="row">7</th>
+        <td>localhost:5000/news/{news_id}</td>
+        <td>GET</td>
+        <td>get news by id</td>
+        <td>need login</td>
+      </tr>
+      <tr>
+        <th scope="row">8</th>
+        <td>localhost:5000/news/{news_id}</td>
+        <td>PUT</td>
+        <td>update news by id</td>
+        <td>need login</td>
+      </tr>
+      <tr>
+        <th scope="row">9</th>
+        <td>localhost:5000/news/{news_id}</td>
+        <td>PATCH</td>
+        <td>patch news by id</td>
+        <td>need login</td>
+      </tr>
+      <tr>
+        <th scope="row">8</th>
+        <td>localhost:5000/news/{news_id}</td>
+        <td>DELETE</td>
+        <td>delete news by id</td>
+        <td>need login</td>
+      </tr>
+    </tbody>
+</table>
+
+<br>
+registered user
+<table class="table">
+    <thead class="table-dark">
+        <tr>
+        <th>#</th>
+        <th>username</th>
+        <th>password</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>admin</td>
+            <td>admin123</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>user</td>
+            <td>user123</td>
+        </tr>
+    </tbody>
+</table>

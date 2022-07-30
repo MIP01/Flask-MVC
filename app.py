@@ -1,11 +1,11 @@
 # Importing the necessary modules and libraries
 from ast import Index
-from flask import Flask, jsonify
+from flask import Flask, render_template
 from flask_migrate import Migrate
 from routes.user_bp import user_bp
 from routes.auth_bp import auth_bp
 from models.User import db
-from flask_login import LoginManager, login_required
+from flask_login import LoginManager
 
 
 app = Flask(__name__)
@@ -28,20 +28,7 @@ def load_user(user_id):
 
 @app.route('/')
 def index():
-    return {'status': 'OK',
-            'localhost:5000/auth' : 'authenticate user',
-            'localhost:5000/auth/logout' : 'logout user',
-            'localhost:5000/news' : 'view content list(need login)',
-            'localhost:5000/news/create' : 'Create table in mysql database',
-            'localhost:5000/news/insert' : 'Auto generate user and news in mysql database',
-            'localhost:5000/news [POST]' : 'insert news(need login)',
-            'localhost:5000/news/<int:news_id> [GET]' : 'get news by id(need login)',
-            'localhost:5000/news/<int:news_id> [PUT]' : 'update news by id(need login)',
-            'localhost:5000/news/<int:news_id> [PATCH]' : 'patch news by id(need login)',
-            'localhost:5000/news/<int:news_id> [DELETE]' : 'delete news by id(need login)',
-            'registered user' : 'password',  
-            'admin' : 'admin123',
-            'user' : 'user123'}
+    return render_template('home/home.html')
 
 
 
