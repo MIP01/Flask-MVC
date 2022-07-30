@@ -20,8 +20,11 @@ class User(db.Model):
         """True, as all users are active."""
         return True
 
-    def get_id(self):
+    def is_authenticated(self):
         return True
+
+    def get_id(self):
+        return str(self.id)
 
 
 class News(db.Model):
@@ -34,10 +37,3 @@ class News(db.Model):
     created_by = db.Column(db.String(100))
     updated_by = db.Column(db.String(100))
     flag = db.Column(db.Integer)
-
-    def is_active(self):
-        """True, as all users are active."""
-        return True
-
-    def get_id(self):
-        return True

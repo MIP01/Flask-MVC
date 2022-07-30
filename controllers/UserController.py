@@ -7,6 +7,7 @@ from models.User import News, User, db
 from werkzeug.security import generate_password_hash
 from faker import Faker
 from faker_vehicle import VehicleProvider
+from flask_login import login_required
 
 db = SQLAlchemy()
 engine = create_engine('mysql://root@localhost/db_sample')
@@ -15,8 +16,6 @@ connection = engine.raw_connection()
 def index():
     pass
    
-
-
 def create():
     try:
         # create tables if not exists.
@@ -31,6 +30,7 @@ def create():
 
 
 # insert data into table.
+#User data
 def insert():
     import hashlib
     
@@ -39,16 +39,28 @@ def insert():
     write_api='admin123+write_4p1'
     read_api='admin123_read_4p1'
 
+    username1='user'
+    password1='user123'
+    write_api1='user123+write_4p1'
+    read_api1='user123_read_4p1'
+
     example = User(username=username,
                        password=generate_password_hash(password, method='sha256'),
                        write_api=hashlib.md5(write_api.encode()).hexdigest(),
                        read_api=hashlib.md5(read_api.encode()).hexdigest(),
                        status=True)
+
+    example1 = User(username=username1,
+                       password=generate_password_hash(password1, method='sha256'),
+                       write_api=hashlib.md5(write_api1.encode()).hexdigest(),
+                       read_api=hashlib.md5(read_api1.encode()).hexdigest(),
+                       status=True)
     
     db.session.add(example)
+    db.session.add(example1)
     db.session.commit()
 
-
+    #News data
     fake = Faker()
     fake.add_provider(VehicleProvider)
     for _ in range(100):
@@ -64,33 +76,37 @@ def insert():
 
     return '==================DATA INSERTED=================='
 
+
 #routing
+@login_required
 def news():
     db = SQLAlchemy()
     cursor = connection.cursor()
     #SELECT
     query = "SELECT news_id, title, content, datetime, flag FROM news"
     cursor.execute(query)
-    columns = [column[0] for column in cursor.description] #ambil nama kolom
+    columns = [column[0] for column in cursor.description]
     result = []
     
     for row in cursor.fetchall():
-        result.append(dict(zip(columns, row))) #konversi ke dictionary
+        result.append(dict(zip(columns, row)))
         
     return jsonify(result)
 
+@login_required
 def get_news(news_id):
     db = SQLAlchemy()
     cursor = connection.cursor()
     #SELECT
     query = "SELECT news_id, title, content, datetime, flag FROM news WHERE news_id = %s"
     cursor.execute(query, [news_id])
-    columns = [column[0] for column in cursor.description] #ambil nama kolom
+    columns = [column[0] for column in cursor.description]
     result = []
-    result.append(dict(zip(columns, cursor.fetchone()))) #konversi ke dictionary
+    result.append(dict(zip(columns, cursor.fetchone())))
         
     return jsonify(result)
 
+@login_required
 def insert_news():
     db = SQLAlchemy()
     cursor = connection.cursor()
@@ -106,6 +122,7 @@ def insert_news():
 
     return ('data inserted')
 
+@login_required
 def update(news_id):
     db = SQLAlchemy()
     cursor = connection.cursor()
@@ -122,6 +139,7 @@ def update(news_id):
 
     return ("data updated")
 
+@login_required
 def patch_news(news_id):
     db = SQLAlchemy()
     cursor = connection.cursor()
@@ -134,6 +152,7 @@ def patch_news(news_id):
     
     return ('patched')
 
+@login_required
 def delete(news_id):
     db = SQLAlchemy()
     cursor = connection.cursor()
