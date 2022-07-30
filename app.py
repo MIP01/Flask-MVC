@@ -5,7 +5,7 @@ from flask_migrate import Migrate
 from routes.user_bp import user_bp
 from routes.auth_bp import auth_bp
 from models.User import db
-from flask_login import LoginManager
+from flask_login import LoginManager, login_required
 
 
 app = Flask(__name__)
@@ -29,16 +29,20 @@ def load_user(user_id):
 @app.route('/')
 def index():
     return {'status': 'OK',
-            'localhost:5000/auth': 'authenticate user',
-            'localhost:5000/auth/logout': 'logout user',
-            'localhost:5000/news': 'view content list',
-            'localhost:5000/news/create': 'Create table in mysql database',
-            'localhost:5000/news/insert': 'Insert data in mysql database table(news)',
-            'localhost:5000/news [POST]': 'insert news',
-            'localhost:5000/news/<int:news_id> [GET]': 'get news by id',
-            'localhost:5000/news/<int:news_id> [PUT]': 'update news by id',
-            'localhost:5000/news/<int:news_id> [PATCH]': 'patch news by id',
-            'localhost:5000/news/<int:news_id> [DELETE]': 'delete news by id'}
+            'localhost:5000/auth' : 'authenticate user',
+            'localhost:5000/auth/logout' : 'logout user',
+            'localhost:5000/news' : 'view content list(need login)',
+            'localhost:5000/news/create' : 'Create table in mysql database',
+            'localhost:5000/news/insert' : 'Auto generate user and news in mysql database',
+            'localhost:5000/news [POST]' : 'insert news(need login)',
+            'localhost:5000/news/<int:news_id> [GET]' : 'get news by id(need login)',
+            'localhost:5000/news/<int:news_id> [PUT]' : 'update news by id(need login)',
+            'localhost:5000/news/<int:news_id> [PATCH]' : 'patch news by id(need login)',
+            'localhost:5000/news/<int:news_id> [DELETE]' : 'delete news by id(need login)',
+            'registered user' : 'password',  
+            'admin' : 'admin123',
+            'user' : 'user123'}
+
 
 
 if __name__ == '__main__':
