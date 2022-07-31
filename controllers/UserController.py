@@ -7,7 +7,7 @@ from models.User import News, User, db
 from werkzeug.security import generate_password_hash
 from faker import Faker
 from faker_vehicle import VehicleProvider
-from flask_login import login_required
+from flask_login import current_user, login_required
 
 db = SQLAlchemy()
 engine = create_engine('mysql://root@localhost/db_sample')
@@ -44,6 +44,10 @@ def insert():
     write_api1='user123+write_4p1'
     read_api1='user123_read_4p1'
 
+    username2='user1'
+    password2='user123'
+    read_api2='user123_read_4p1'
+
     example = User(username=username,
                        password=generate_password_hash(password, method='sha256'),
                        write_api=hashlib.md5(write_api.encode()).hexdigest(),
@@ -55,9 +59,15 @@ def insert():
                        write_api=hashlib.md5(write_api1.encode()).hexdigest(),
                        read_api=hashlib.md5(read_api1.encode()).hexdigest(),
                        status=True)
+
+    example2 = User(username=username2,
+                       password=generate_password_hash(password2, method='sha256'),
+                       read_api=hashlib.md5(read_api2.encode()).hexdigest(),
+                       status=True)
     
     db.session.add(example)
     db.session.add(example1)
+    db.session.add(example2)
     db.session.commit()
 
     #News data
@@ -80,83 +90,136 @@ def insert():
 #routing
 @login_required
 def news():
-    db = SQLAlchemy()
-    cursor = connection.cursor()
-    #SELECT
-    query = "SELECT news_id, title, content, datetime, flag FROM news"
-    cursor.execute(query)
-    columns = [column[0] for column in cursor.description]
-    result = []
-    
-    for row in cursor.fetchall():
-        result.append(dict(zip(columns, row)))
+    if current_user.username == 'admin':
+        db = SQLAlchemy()
+        cursor = connection.cursor()
+        #SELECT
+        query = "SELECT news_id, title, content, datetime, flag FROM news"
+        cursor.execute(query)
+        columns = [column[0] for column in cursor.description]
+        result = []
         
-    return jsonify(result)
+        for row in cursor.fetchall():
+            result.append(dict(zip(columns, row)))
+        return jsonify(result)
+    
+    else:
+        db = SQLAlchemy()
+        cursor = connection.cursor()
+        #SELECT
+        query = "SELECT news_id, title, content, datetime, flag FROM news WHERE flag = 1"
+        cursor.execute(query)
+        columns = [column[0] for column in cursor.description]
+        result = []
+        
+        for row in cursor.fetchall():
+            result.append(dict(zip(columns, row))) 
+        return jsonify(result)
+
+
 
 @login_required
 def get_news(news_id):
-    db = SQLAlchemy()
-    cursor = connection.cursor()
-    #SELECT
-    query = "SELECT news_id, title, content, datetime, flag FROM news WHERE news_id = %s"
-    cursor.execute(query, [news_id])
-    columns = [column[0] for column in cursor.description]
-    result = []
-    result.append(dict(zip(columns, cursor.fetchone())))
-        
-    return jsonify(result)
+    if current_user.username == 'admin':
+        db = SQLAlchemy()
+        cursor = connection.cursor()
+        #SELECT
+        query = "SELECT news_id, title, content, datetime, flag FROM news WHERE news_id = %s"
+        cursor.execute(query, [news_id])
+        columns = [column[0] for column in cursor.description]
+        result = []
+        result.append(dict(zip(columns, cursor.fetchone())))
+        return jsonify(result)
+    else :
+        db = SQLAlchemy()
+        cursor = connection.cursor()
+        #SELECT
+        query = "SELECT news_id, title, content, datetime FROM news WHERE flag = 1 and news_id = %s"
+        cursor.execute(query, [news_id])
+        columns = [column[0] for column in cursor.description]
+        result = []
+        result.append(dict(zip(columns, cursor.fetchone())))
+        return jsonify(result)
+
 
 @login_required
 def insert_news():
-    db = SQLAlchemy()
-    cursor = connection.cursor()
-    news_details = request.json
-    title = news_details['title']
-    content = news_details['content']
-    datetime = news_details['datetime']
-    flag = news_details['flag']
-    created_by = news_details['created_by']
-    query = "INSERT INTO news(title, content, datetime, flag, created_by) VALUES (%s,%s,%s,%s,%s)"
-    cursor.execute(query, [title, content, datetime, flag, created_by])
-    connection.commit()
+    if current_user.username == 'admin':
+        db = SQLAlchemy()
+        cursor = connection.cursor()
+        news_details = request.json
+        title = news_details['title']
+        content = news_details['content']
+        datetime = news_details['datetime']
+        flag = news_details['flag']
+        created_by = news_details['created_by']
+        query = "INSERT INTO news(title, content, datetime, flag, created_by) VALUES (%s,%s,%s,%s,%s)"
+        cursor.execute(query, [title, content, datetime, flag, created_by])
+        connection.commit()
+        return ('data inserted')
 
-    return ('data inserted')
+    elif current_user.username != 'admin' and current_user.write_api == True:
+        db = SQLAlchemy()
+        cursor = connection.cursor()
+        news_details = request.json
+        title = news_details['title']
+        content = news_details['content']
+        datetime = news_details['datetime']
+        flag = news_details['flag']
+        created_by = news_details['created_by']
+        query = "INSERT INTO news(title, content, datetime, flag, created_by) VALUES (%s,%s,%s,%s,%s)"
+        cursor.execute(query, [title, content, datetime, flag, created_by])
+        connection.commit()
+        return ('data inserted')
+
+    else :
+        return('access deny')
 
 @login_required
 def update(news_id):
-    db = SQLAlchemy()
-    cursor = connection.cursor()
-    news_details = request.json
-    news_id = news_details['news_id']
-    title = news_details['title']
-    content = news_details['content']
-    datetime = news_details['datetime']
-    flag = news_details['flag']
-    updated_by = news_details['updated_by']
-    query = "UPDATE news SET title = %s, content = %s, datetime = %s, flag = %s, updated_by = %s WHERE news_id = %s"
-    cursor.execute(query, [title, content, datetime, flag, updated_by, news_id])
-    connection.commit()
+    if current_user.username == 'admin':
+        db = SQLAlchemy()
+        cursor = connection.cursor()
+        news_details = request.json
+        news_id = news_details['news_id']
+        title = news_details['title']
+        content = news_details['content']
+        datetime = news_details['datetime']
+        flag = news_details['flag']
+        updated_by = news_details['updated_by']
+        query = "UPDATE news SET title = %s, content = %s, datetime = %s, flag = %s, updated_by = %s WHERE news_id = %s"
+        cursor.execute(query, [title, content, datetime, flag, updated_by, news_id])
+        connection.commit()
+        return ("data updated")
 
-    return ("data updated")
+    else :
+        return('access deny')
 
 @login_required
 def patch_news(news_id):
-    db = SQLAlchemy()
-    cursor = connection.cursor()
-    news_details = request.json
-    news_id = news_details['news_id']
-    flag = news_details['flag']
-    query = "UPDATE news SET flag = %s WHERE news_id = %s"
-    cursor.execute(query, [flag, news_id])
-    connection.commit()
-    
-    return ('patched')
+    if current_user.username == 'admin':
+        db = SQLAlchemy()
+        cursor = connection.cursor()
+        news_details = request.json
+        news_id = news_details['news_id']
+        flag = news_details['flag']
+        query = "UPDATE news SET flag = %s WHERE news_id = %s"
+        cursor.execute(query, [flag, news_id])
+        connection.commit()
+        return ('patched')
+
+    else :
+        return('access deny')
 
 @login_required
 def delete(news_id):
-    db = SQLAlchemy()
-    cursor = connection.cursor()
-    query = "DELETE FROM news WHERE news_id = %s"
-    cursor.execute(query, [news_id])
-    connection.commit()
-    return ('deleted')
+    if current_user.username == 'admin':
+        db = SQLAlchemy()
+        cursor = connection.cursor()
+        query = "DELETE FROM news WHERE news_id = %s"
+        cursor.execute(query, [news_id])
+        connection.commit()
+        return ('deleted')
+
+    else :
+        return('access deny')
